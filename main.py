@@ -73,10 +73,6 @@ class Cli(cmd.Cmd):
     def default(self, line):
         print("Несуществующая команда")
 
-    def emptyline(self):
-        pass
-
-
 if __name__ == "__main__":
     cli = Cli()
     try:
