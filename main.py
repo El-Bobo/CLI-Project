@@ -1,5 +1,6 @@
 import cmd
 import subprocess
+
 import GPUtil
 import psutil
 
@@ -12,17 +13,17 @@ class Cli(cmd.Cmd):
         self.intro = "Добро пожаловать\nДля справки наберите 'help'"
         self.doc_header = "Доступные команды (для справки по конкретной команде наберите 'help _команда_')"
 
-    def do_show_cpu(self, args):
+    def do_show_cpu(self, args) -> None:
         """show_cpu - нагрузка на процессоры"""
         print("CPU (%):", psutil.cpu_percent(interval=1))
 
-    def do_show_mem(self, args):
+    def do_show_mem(self, args) -> None:
         """show_mem - использование RAM"""
         ram = psutil.virtual_memory()
         print("RAM usage (%):", ram.percent)
         print("RAM used (GB):", round(ram.used / 1e9, 2))
 
-    def do_show_disk(self, args):
+    def do_show_disk(self, args) -> None:
         """show_disk - свободное место на диске"""
         GB = 1073741824
         print(
@@ -41,7 +42,7 @@ class Cli(cmd.Cmd):
             "{} %".format(psutil.disk_usage("C:\\")[3]),
         )
 
-    def do_show_gpu(self, args):
+    def do_show_gpu(self, args) -> None:
         """show_gpu - параметры видеокарты"""
         gpus = GPUtil.getGPUs()
         if gpus:
@@ -55,7 +56,7 @@ class Cli(cmd.Cmd):
         else:
             print("GPU не обнаружено.")
 
-    def do_show_net(self, args):
+    def do_show_net(self, args) -> None:
         """show_net - сетевые параметры"""
         data = subprocess.check_output(
             ["ipconfig", "/all"], encoding="cp866", errors="ignore"
@@ -63,15 +64,21 @@ class Cli(cmd.Cmd):
         for line in data:
             print(line.strip())
 
-    def do_show_log(self, args):
+    def do_show_log(self, args) -> None:
         """show_log - системный журнал"""
         for p in psutil.process_iter(["name", "open_files"]):
             for file in p.info["open_files"] or []:
                 if file.path.endswith(".log"):
                     print("%-5s %-10s %s" % (p.pid, p.info["name"][:10], file.path))
 
-    def default(self, line):
+    def default(self, line) -> None:
         print("Несуществующая команда")
+
+    def do_exit(self, args) -> bool:
+        """exit - выход из программы"""
+        print("Выход...")
+        return True
+
 
 if __name__ == "__main__":
     cli = Cli()
