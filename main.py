@@ -1,3 +1,4 @@
+import asyncio
 import cmd
 import subprocess
 
@@ -80,8 +81,20 @@ class Cli(cmd.Cmd):
         return True
 
 
+class CliAscynio(Cli):
+    def do_show_all(self, args) -> None:
+        """show_all - информация об ПК"""
+        asyncio.run(self._run_show_all())
+
+    async def _run_show_all(self):
+        await asyncio.to_thread(self.do_show_cpu, "")
+        await asyncio.to_thread(self.do_show_gpu, "")
+        await asyncio.to_thread(self.do_show_mem, "")
+        await asyncio.to_thread(self.do_show_disk, "")
+
+
 if __name__ == "__main__":
-    cli = Cli()
+    cli = CliAscynio()
     try:
         cli.cmdloop()
     except KeyboardInterrupt:
